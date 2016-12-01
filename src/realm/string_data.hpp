@@ -139,7 +139,7 @@ public:
     bool begins_with(StringData) const noexcept;
     bool ends_with(StringData) const noexcept;
     bool contains(StringData) const noexcept;
-    
+
     // Wildcard matching ('?' for single char, '*' for zero or more chars)
     // case insensitive version in unicode.hpp
     bool like(StringData) const noexcept;
@@ -161,7 +161,7 @@ public:
 private:
     const char* m_data;
     size_t m_size;
-    
+
     static bool matchlike(const StringData& text, const StringData& pattern) noexcept;
 };
 
@@ -298,18 +298,18 @@ inline bool StringData::matchlike(const StringData& text, const StringData& patt
     std::vector<size_t> patternpos;
     size_t p1 = 0; // position in text (haystack)
     size_t p2 = 0; // position in pattern (needle)
-    
+
     while (true) {
         if (p1 == text.size()) {
             if (p2 == pattern.size())
                 return true;
-            if (p2 == pattern.size()-1 && pattern[p2] == '*')
+            if (p2 == pattern.size() - 1 && pattern[p2] == '*')
                 return true;
             goto no_match;
         }
         if (p2 == pattern.size())
             goto no_match;
-        
+
         if (pattern[p2] == '*') {
             textpos.push_back(p1);
             patternpos.push_back(++p2);
@@ -324,20 +324,20 @@ inline bool StringData::matchlike(const StringData& text, const StringData& patt
             }
             else {
                 size_t p = 1;
-                while (p1+p != text.size() && (text[p1+p] & 0xc0) == 0x80)
+                while (p1 + p != text.size() && (text[p1 + p] & 0xc0) == 0x80)
                     ++p;
                 p1 += p;
                 ++p2;
                 continue;
             }
         }
-        
+
         if (pattern[p2] == text[p1]) {
             ++p1;
             ++p2;
             continue;
         }
-        
+
     no_match:
         if (textpos.empty())
             return false;
@@ -345,10 +345,10 @@ inline bool StringData::matchlike(const StringData& text, const StringData& patt
             if (p1 == text.size()) {
                 textpos.pop_back();
                 patternpos.pop_back();
-                
+
                 if (textpos.empty())
                     return false;
-                
+
                 p1 = textpos.back();
             }
             else {
@@ -365,7 +365,7 @@ inline bool StringData::like(StringData d) const noexcept
     if (is_null() || d.is_null()) {
         return (is_null() && d.is_null());
     }
-    
+
     return matchlike(*this, d);
 }
 
